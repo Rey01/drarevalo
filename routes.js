@@ -134,8 +134,13 @@ const screens = {
       drawerLabel: 'Order Confirmed',
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
+  },Login: {
+    screen: Login,
+    navigationOptions: {
+      drawerLabel: 'Login Screen',
+      drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
+    },
   },
-  /*
   Presentation: {
     screen: Presentation,
     navigationOptions: {
@@ -143,13 +148,7 @@ const screens = {
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
   },
-  Login: {
-    screen: Login,
-    navigationOptions: {
-      drawerLabel: 'Login Screen',
-      drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
-    },
-  },
+  
   Register: {
     screen: Register,
     navigationOptions: {
@@ -171,7 +170,6 @@ const screens = {
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
   },
-  */
 };
 
 const options = {
