@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  Alert, Dimensions, KeyboardAvoidingView, StyleSheet,Image,AsyncStorage
+  Alert, Dimensions, KeyboardAvoidingView, StyleSheet,Image,AsyncStorage,View
 } from 'react-native';
+import GalioApp from '../../routes';
 
 // galio component
 import {
@@ -15,6 +16,8 @@ class Login extends React.Component {
   state = {
     email: '-',
     password: '-',
+    logueado: false,
+    usuario_data: [],
   }
 
   handleChange = (name, value) => {
@@ -22,62 +25,86 @@ class Login extends React.Component {
   }
 
   loguear_me = async () => {
-    console.log("demostracion");
+    const { navigation } = this.props;
     try {
       await AsyncStorage.setItem('usuario', 'I like to save it.');
+      this.retrieveData();
     } catch (error) {
       // Error saving data
     }
   };
+  retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('usuario');
+      if (value !== null) {
+        this.setState({ logueado: true });
+        this.setState({ usuario_data: value });
+        return value;
+      }else{
+        this.setState({ logueado: false });
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   render() {
-    return (
-      <Block safe flex style={{ backgroundColor: theme.COLORS.WHITE }}>
-        <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
-          <Image
-            style={{width: '60%', height: '30%',marginTop:'30%',marginBottom:'10%'}}
-            source={require('../../assets/logo.png')}
-          />
-          <Block flex={2} center space="evenly">
-            <Block flex={2}>
-              <Input
-                rounded
-                type="email-address"
-                placeholder="Correo"
-                autoCapitalize="none"
-                style={{ width: width * 0.9 }}
-                onChangeText={text => this.handleChange('email', text)}
+    if(this.state.logueado){
+      return (
+        <View style={{ flex: 1 }}>
+          <GalioApp />
+        </View>
+      );
+    }else{
+        return (
+          <Block safe flex style={{ backgroundColor: theme.COLORS.WHITE }}>
+            <KeyboardAvoidingView style={styles.container} behavior="height" enabled>
+              <Image
+                style={{width: '60%', height: '30%',marginTop:'30%',marginBottom:'10%'}}
+                source={require('../../assets/logo.png')}
               />
-              <Input
-                rounded
-                password
-                viewPass
-                placeholder="Contraseña"
-                style={{ width: width * 0.9 }}
-                onChangeText={text => this.handleChange('password', text)}
-              />
-              <Text
-                color={theme.COLORS.ERROR}
-                size={theme.SIZES.FONT * 0.75}
-                onPress={() => Alert.alert('En desarrollo')}
-                style={{ alignSelf: 'flex-end', lineHeight: theme.SIZES.FONT * 2 }}
-              >
-                ¿Olvidaste tu contraseña?
-              </Text>
-            </Block>
-            <Block flex middle>
-              <Button
-                  round
-                  color="error"
-                  onPress={() => this.loguear_me()}
-              >
-                Iniciar sesión
-              </Button>
-            </Block>
+              <Block flex={2} center space="evenly">
+                <Block flex={2}>
+                  <Input
+                    rounded
+                    type="email-address"
+                    placeholder="Correo"
+                    autoCapitalize="none"
+                    style={{ width: width * 0.9 }}
+                    onChangeText={text => this.handleChange('email', text)}
+                  />
+                  <Input
+                    rounded
+                    password
+                    viewPass
+                    placeholder="Contraseña"
+                    style={{ width: width * 0.9 }}
+                    onChangeText={text => this.handleChange('password', text)}
+                  />
+                  <Text
+                    color={theme.COLORS.ERROR}
+                    size={theme.SIZES.FONT * 0.75}
+                    onPress={() => Alert.alert('En desarrollo')}
+                    style={{ alignSelf: 'flex-end', lineHeight: theme.SIZES.FONT * 2 }}
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </Text>
+                </Block>
+                <Block flex middle>
+                  <Button
+                      round
+                      color="error"
+                      onPress={() => this.loguear_me()}
+                  >
+                    Iniciar sesión
+                  </Button>
+                </Block>
+              </Block>
+            </KeyboardAvoidingView>
           </Block>
-        </KeyboardAvoidingView>
-      </Block>
-    );
+        );
+    }
   }
 }
 

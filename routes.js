@@ -13,7 +13,6 @@ import Article from './src/screens/Article';
 import ArticleCover from './src/screens/ArticleCover';
 import Cards from './src/screens/Cards';
 import Components from './src/screens/Components';
-import Login from './src/screens/Login';
 import News from './src/screens/News';
 import OrderConfirmed from './src/screens/OrderConfirmed';
 import Presentation from './src/screens/Presentation';
@@ -112,7 +111,6 @@ const screens = {
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
   },
-  /*
   Dashboard: {
     screen: Dashboard,
     navigationOptions: {
@@ -120,7 +118,6 @@ const screens = {
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
   },
-  */
   News: {
     screen: News,
     navigationOptions: {
@@ -132,12 +129,6 @@ const screens = {
     screen: OrderConfirmed,
     navigationOptions: {
       drawerLabel: 'Order Confirmed',
-      drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
-    },
-  },Login: {
-    screen: Login,
-    navigationOptions: {
-      drawerLabel: 'Login Screen',
       drawerIcon: props => <MenuIcon name="flag" family="font-awesome" focused={props.focused} />,
     },
   },

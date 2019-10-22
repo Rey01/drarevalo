@@ -252,7 +252,6 @@ export default class Components extends React.Component {
                   location="Los Angeles, CA"
                   avatar="http://i.pravatar.cc/100?id=pineaple"
                   imageBlockStyle={styles.cardNoRadius}
-                  image="https://images.unsplash.com/photo-1494252713559-f26b4bf0b174?w=840&q=300"
                 />
 
                 <Card
