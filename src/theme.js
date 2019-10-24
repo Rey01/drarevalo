@@ -20,6 +20,9 @@ const COLORS = {
   DRIBBBLE: '#EA4C89',
   ICON: '#000000',
 };
+const COMPONENTS = {
+  URL_API: 'https://medicprocloud.com/doctoresarevalos/APIs/',
+};
 
 const SIZES = {
   BASE: 16,
@@ -30,4 +33,5 @@ const SIZES = {
 export default {
   COLORS,
   SIZES,
+  COMPONENTS,
 };

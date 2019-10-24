@@ -1,5 +1,5 @@
 import React from 'react';
-import { View,Dimensions,AsyncStorage,Alert,KeyboardAvoidingView, Image,StyleSheet } from 'react-native';
+import { View,Dimensions,AsyncStorage,Alert,KeyboardAvoidingView,Image,StyleSheet,ActivityIndicator } from 'react-native';
 import { Block, Button, Input,  Text} from 'galio-framework';
 import theme from './src/theme';
 import GalioApp from './routes';
@@ -9,11 +9,16 @@ const { height, width } = Dimensions.get('window');
 export default class App extends React.Component {
 
   state = {
-    email: '-',
-    password: '-',
+    email: '',
+    password: '',
     logueado: false,
     cargando: true,
     usuario_data: [],
+    error: '',
+    color_email: theme.COLORS.BLACK,
+    color_email_place: theme.COLORS.MUTED,
+    color_clave: theme.COLORS.BLACK,
+    color_clave_place: theme.COLORS.MUTED,
   }
   componentWillMount(){
     this.retrieveData();
@@ -24,12 +29,47 @@ export default class App extends React.Component {
   }
   
   loguear_me = async () => {
-    this.setState({ cargando: true });
-
+    this.setState({ error: "",color_email: theme.COLORS.BLACK, color_clave: theme.COLORS.BLACK, color_email_place: theme.COLORS.MUTED, color_clave_place: theme.COLORS.MUTED });
     //aqui poner la funcion api que traera los datos
-    try {
-      await AsyncStorage.setItem('usuario', 'I like to save it.');
+    if(this.state.email==""){
+      this.setState({ error: "El correo no puede ir vacio",color_email:theme.COLORS.ERROR, color_email_place: theme.COLORS.ERROR });
+      return false;
+    }else if(this.state.password==""){
+      this.setState({ error: "La contraseña no puede ir vacia",color_clave:theme.COLORS.ERROR, color_clave_place: theme.COLORS.ERROR });
+      return false;
+    }else{
+
+    }
+    this.setState({ cargando: true });
+    
+    var email=this.state.email;
+    var password=this.state.password;
+    var dataSend = new FormData();
+    dataSend.append('email', email);
+    dataSend.append('password', password);
+    return fetch(theme.COMPONENTS.URL_API+"ValidateUser", {
+      method: 'POST',
+      body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      if(resp.datos.estado){
+        this.setdatos(resp.datos);
+      }
       this.retrieveData();
+      this.setState({ error:resp.datos.descripcion });
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+  
+  setdatos = async (datos) =>{
+    try {
+      console.log("1");
+      console.log(datos);
+      console.log("2");
+      await AsyncStorage.setItem('usuario', datos);
+     
     } catch (error) {
       // Error saving data
     }
@@ -46,6 +86,7 @@ export default class App extends React.Component {
   retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('usuario');
+      console.log(value);
       this.setState({ cargando: false });
       if (value !== null) {
         this.setState({ logueado: true });
@@ -63,8 +104,8 @@ export default class App extends React.Component {
   render() {
     if(this.state.cargando){
       return (
-        <View style={{ flex: 1 }}>
-          <Text>Cargando........</Text>
+        <View style={styles.cargando}>
+          <ActivityIndicator size={theme.SIZES.BASE*2.5} color={theme.COLORS.ERROR} />
         </View>
       );
     }else if(this.state.logueado){
@@ -74,6 +115,7 @@ export default class App extends React.Component {
         </View>
       );
     }else {
+      const error = this.state.error;
       return (
         <View style={{ flex: 1 }}>
           <Block safe flex style={{ backgroundColor: theme.COLORS.WHITE }}>
@@ -83,13 +125,15 @@ export default class App extends React.Component {
                 source={require('./assets/logo.png')}
               />
               <Block flex={2} center space="evenly">
+                <Text p muted style={styles.error}>{error}</Text>
                 <Block flex={2}>
                   <Input
                     rounded
                     type="email-address"
                     placeholder="Correo"
                     autoCapitalize="none"
-                    style={{ width: width * 0.9 }}
+                    placeholderTextColor={this.state.color_email_place}
+                    style={{ width: width * 0.9, borderColor: this.state.color_email }}
                     onChangeText={text => this.handleChange('email', text)}
                   />
                   <Input
@@ -97,7 +141,8 @@ export default class App extends React.Component {
                     password
                     viewPass
                     placeholder="Contraseña"
-                    style={{ width: width * 0.9 }}
+                    placeholderTextColor={this.state.color_clave_place}
+                    style={{ width: width * 0.9, borderColor: this.state.color_clave }}
                     onChangeText={text => this.handleChange('password', text)}
                   />
                   <Text
@@ -137,6 +182,14 @@ const styles = StyleSheet.create({
     paddingTop: theme.SIZES.BASE * 0.3,
     paddingHorizontal: theme.SIZES.BASE,
     backgroundColor: theme.COLORS.WHITE,
+  },
+  error:{
+    color: "red",
+  },
+  cargando:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   social: {
     width: theme.SIZES.BASE * 3.5,

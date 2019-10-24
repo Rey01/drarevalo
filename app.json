@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "galio-native-kit",
-    "description": "Build amazing apps in one codebase. //wip from sdk30 to sdk33",
-    "slug": "galio-native-kit",
+    "name": "Dr. Arevalos",
+    "description": "Dr. Arevalos",
+    "slug": "dr-arevalos",
     "privacy": "public",
     "sdkVersion": "33.0.0",
     "platforms": [
@@ -25,7 +25,6 @@
     ],
     "ios": {
       "supportsTablet": true
-    },
-    "githubUrl": "https://github.com/galio-org/galio"
+    }
   }
 }
