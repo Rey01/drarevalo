@@ -21,6 +21,7 @@ export default class App extends React.Component {
     color_clave_place: theme.COLORS.MUTED,
   }
   componentWillMount(){
+    //this.remove();
     this.retrieveData();
   }
   
@@ -65,10 +66,7 @@ export default class App extends React.Component {
   
   setdatos = async (datos) =>{
     try {
-      console.log("1");
-      console.log(datos);
-      console.log("2");
-      await AsyncStorage.setItem('usuario', datos);
+      await AsyncStorage.setItem('usuario', JSON.stringify(datos));
      
     } catch (error) {
       // Error saving data
@@ -86,7 +84,6 @@ export default class App extends React.Component {
   retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('usuario');
-      console.log(value);
       this.setState({ cargando: false });
       if (value !== null) {
         this.setState({ logueado: true });

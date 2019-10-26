@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Image, StyleSheet, ScrollView, SafeAreaView, Platform,
+  Image, StyleSheet, ScrollView, SafeAreaView, Platform,AsyncStorage
 } from 'react-native';
 import {
   createDrawerNavigator,
@@ -24,12 +24,29 @@ import Grid from './src/screens/Grid';
 import theme from './src/theme';
 import { Block, Icon, Text } from 'galio-framework';
 
+
+
+retrieveData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('usuario');
+    
+    if(value !== null) {
+      return  JSON.stringify(value);
+    }else{
+      return false;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+state = retrieveData();
+console.log(state);
 const GalioDrawer = props => (
   <SafeAreaView style={styles.drawer} forceInset={{ top: 'always', horizontal: 'never' }}>
     <Block space="between" row style={styles.header}>
       <Block flex={0.3}><Image source={{ uri: 'http://i.pravatar.cc/100' }} style={styles.avatar} /></Block>
       <Block flex style={styles.middle}>
-        <Text size={theme.SIZES.FONT * 0.875}>Galio Framework</Text>
+        <Text size={theme.SIZES.FONT * 0.875}>{state.nombreCompleto}</Text>
         <Text muted size={theme.SIZES.FONT * 0.875}>React Native</Text>
       </Block>
     </Block>
