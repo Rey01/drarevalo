@@ -25,28 +25,51 @@ import theme from './src/theme';
 import { Block, Icon, Text } from 'galio-framework';
 
 
+class Usuario extends React.Component {
 
-retrieveData = async () => {
-  try {
-    const value = await AsyncStorage.getItem('usuario');
-    
-    if(value !== null) {
-      return  JSON.stringify(value);
-    }else{
-      return false;
+  state = {
+    usuario: {
+      correoElectronico: "",
+      descripcion: "",
+      estado: "",
+      idAsignacionMembresia: "",
+      idExpediente: "",
+      nombreCompleto: "",
+      telemedicina: "",
     }
-  } catch (error) {
-    console.log(error);
   }
-};
-state = retrieveData();
-console.log(state);
+  
+  retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('usuario');
+      if(value !== null) {
+        usuario = JSON.parse(value);
+        this.setState({usuario});
+      }else{
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  componentWillMount(){
+    this.retrieveData();
+  };
+  render() {
+    state  = this.state;
+    console.log(state.usuario.nombreCompleto);
+    return (
+      <Text size={theme.SIZES.FONT * 0.875}>{state.usuario.nombreCompleto} </Text>
+    );
+  }
+}
+
 const GalioDrawer = props => (
   <SafeAreaView style={styles.drawer} forceInset={{ top: 'always', horizontal: 'never' }}>
     <Block space="between" row style={styles.header}>
       <Block flex={0.3}><Image source={{ uri: 'http://i.pravatar.cc/100' }} style={styles.avatar} /></Block>
       <Block flex style={styles.middle}>
-        <Text size={theme.SIZES.FONT * 0.875}>{state.nombreCompleto}</Text>
+          <Usuario />
         <Text muted size={theme.SIZES.FONT * 0.875}>React Native</Text>
       </Block>
     </Block>
