@@ -52,13 +52,14 @@ class Citas extends React.Component {
       title="Citas"
       onLeftPress={() => this.props.navigation.openDrawer()}
       leftIconColor={theme.COLORS.MUTED}
+      size={BASE_SIZE*1.5}
       right={(
         <Button
           color="transparent"
           style={styles.settings}
-          onPress={() => this.props.navigation.openDrawer()}
+          onPress={() => this.props.navigation.navigate('New_cita')}
         >
-          <Icon size={BASE_SIZE*1.5} name="plus" family="font-awesome" color={theme.COLORS.ERROR} />
+          <Icon size={BASE_SIZE*1.5} name="calendar-plus-o" family="font-awesome" color={theme.COLORS.PRIMARY} />
         </Button>
       )}
       style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}
