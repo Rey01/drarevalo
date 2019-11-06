@@ -21,7 +21,7 @@ const COLORS = {
   ICON: '#000000',
 };
 const COMPONENTS = {
-  URL_API: 'https://medicprocloud.com/doctoresarevalos/APIs/',
+  URL_API: 'https://medicprocloud.com/doctoresarevalos/Api_react/',
 };
 
 const SIZES = {

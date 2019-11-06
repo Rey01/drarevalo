@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,
+  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage
 } from 'react-native';
 import { LinearGradient as Gradient } from 'expo';
 
@@ -19,35 +19,88 @@ const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 // mock data
 const cards = [
   {
-    title: 'Tasks',
-    subtitle: '15 completed tasks',
+    title: '18-12-2019',
+    subtitle: 'Visita 4',
     icon: 'calendar',
     iconFamily: 'font-awesome',
   },
 
   {
-    title: 'Aquisitions',
-    subtitle: '15 completed tasks',
+    title: '16-09-2019',
+    subtitle: 'Visita 3',
     icon: 'calendar',
     iconFamily: 'font-awesome',
   },
   {
-    title: 'Cards',
-    subtitle: '15 completed tasks',
+    title: '02-08-2019',
+    subtitle: 'Visita 2',
     icon: 'calendar',
     iconFamily: 'font-awesome',
   },
 
   {
-    title: 'Settings',
-    subtitle: '15 completed tasks',
+    title: '19-01-2019',
+    subtitle: 'Visita 1',
     icon: 'calendar',
     iconFamily: 'font-awesome',
   },
 ];
 
 class Citas extends React.Component {
-  renderHeader = () => (
+  
+  state = {
+    cargando: true,
+    usuario: {
+      correoElectronico: "",
+      descripcion: "",
+      estado: "",
+      idAsignacionMembresia: "",
+      idExpediente: "",
+      nombreCompleto: "",
+      telemedicina: "",
+    },
+    cardsd:[]
+  }
+  retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('usuario');
+      if(value !== null) {
+        usuario = JSON.parse(value);
+        this.setState({usuario});
+        this.retrieveCitas();
+      }else{
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  retrieveCitas = async () => {
+    
+    var idAsignacionMembresia=this.state.usuario.idAsignacionMembresia;
+    var idExpediente=this.state.usuario.idExpediente;
+    var dataSend = new FormData();
+    dataSend.append('idAsignacionMembresia', idAsignacionMembresia);
+    dataSend.append('idExpediente', idExpediente);
+    return fetch(theme.COMPONENTS.URL_API+"FetchCitas?idAsignacionMembresia="+idAsignacionMembresia+"&idExpediente="+idExpediente, {
+      method: 'POST',
+      body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      this.setState({cargando:false});
+      this.setState({cardsd:resp.datos});
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+  componentWillMount(){
+    this.retrieveData();
+    
+  };
+
+  renderHeader = () => ( 
     <NavBar
       title="Citas"
       onLeftPress={() => this.props.navigation.openDrawer()}
@@ -72,7 +125,7 @@ class Citas extends React.Component {
     const gradientColors = index % 2 ? GRADIENT_BLUE : GRADIENT_PINK;
 
     return (
-      <Block row center card shadow space="between" style={styles.card} key={props.title}>
+      <Block row center card shadow space="between" style={styles.card} key={props.fechahora}>
         <Gradient
           start={[0.45, 0.45]}
           end={[0.90, 0.90]}
@@ -81,15 +134,15 @@ class Citas extends React.Component {
         >
           <Icon
             size={BASE_SIZE}
-            name={props.icon}
+            name="calendar"
             color={COLOR_WHITE}
-            family={props.iconFamily}
+            family="font-awesome"
           />
         </Gradient>
 
         <Block flex>
-          <Text size={BASE_SIZE * 1.125}>{props.title}</Text>
-          <Text size={BASE_SIZE * 0.875} muted>{props.subtitle}</Text>
+          <Text size={BASE_SIZE * 1.125}>{props.fechahora}</Text>
+          <Text size={BASE_SIZE * 0.875} muted>{props.title}</Text>
         </Block>
         <Button style={styles.right}>
           <Icon size={BASE_SIZE} name="arrow-right" family="font-awesome" color={COLOR_GREY} />
@@ -98,20 +151,28 @@ class Citas extends React.Component {
     );
   }
 
-  renderCards = () => cards.map((card, index) => this.renderCard(card, index))
+  renderCards = () => this.state.cardsd.map((card, index) => this.renderCard(card, index))
 
   render() {
-    return (
-      <Block safe flex>
-        {/* header */}
-        {this.renderHeader()}
+    if(this.state.cargando){
+      return (
+        <View style={styles.cargando}>
+          <ActivityIndicator size={theme.SIZES.BASE*2.5} color={theme.COLORS.ERROR} />
+        </View>
+      );
+    }else{
+      return (
+        <Block safe flex>
+          {/* header */}
+          {this.renderHeader()}
 
-        {/* cards */}
-        <ScrollView style={{ flex: 1 }}>
-          {this.renderCards()}
-        </ScrollView>
-      </Block>
-    );
+          {/* cards */}
+          <ScrollView style={{ flex: 1 }}>
+            {this.renderCards()}
+          </ScrollView>
+        </Block>
+      );
+    }
   }
 }
 
@@ -123,6 +184,11 @@ const styles = StyleSheet.create({
     padding: BASE_SIZE,
     backgroundColor: COLOR_WHITE,
     shadowOpacity: 0.40,
+  },
+  cargando:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   menu: {
     width: BASE_SIZE * 2,
