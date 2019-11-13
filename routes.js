@@ -16,6 +16,7 @@ import Promociones from './src/screens/Promociones';
 import Telemedicina from './src/screens/Telemedicina';
 import Citas from './src/screens/Citas';
 import New_cita from './src/screens/New_cita';
+import Cuenta from './src/screens/Cuenta';
 
 import theme from './src/theme';
 import { Block, Icon, Text } from 'galio-framework';
@@ -161,6 +162,13 @@ const screens = {
     navigationOptions: {
       drawerLabel: 'Telemedicina',
       drawerIcon: props => <MenuIcon name="phone" family="font-awesome" focused={props.focused} />,
+    },
+  },
+  Cuenta: {
+    screen: Cuenta,
+    navigationOptions: {
+      drawerLabel: 'Cuenta',
+      drawerIcon: props => <MenuIcon name="user" family="font-awesome" focused={props.focused} />,
     },
   },
 };
