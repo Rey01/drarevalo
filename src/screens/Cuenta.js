@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,Dimensions
+  StyleSheet, ScrollView, Platform,Dimensions,Picker
 } from 'react-native';
-
+import Textarea from 'react-native-textarea';
 // galio components
 import {
   Button, Block, Input, Text, NavBar,
@@ -31,7 +31,7 @@ class Citas extends React.Component {
 
   renderHeader = () => (
     <NavBar
-      title="Cuenta"
+      title="Cuenta {}"
       onLeftPress={() => this.props.navigation.openDrawer()}
       leftIconColor={theme.COLORS.MUTED}
       right={(
@@ -50,6 +50,9 @@ class Citas extends React.Component {
     this.setState({ [name]: value });
   }
   
+  actualizar_datos = ()=>{
+    console.log(thiis.state);
+  }
 
   render() {
     value = this.state
@@ -108,10 +111,32 @@ class Citas extends React.Component {
                     Estado Civil:
                 </Text>
                {/* aqui debe ir estado civil */}
+               <Picker
+                selectedValue={this.state.language}
+                style={{height: 50, width: width*0.9}}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({language: itemValue})
+                }>
+                <Picker.Item label="Soltero/a" value="1" />
+                <Picker.Item label="Casado/a" value="2" />
+                <Picker.Item label="Viudo/a" value="3" />
+                <Picker.Item label="Divorciado/a" value="4" />
+              </Picker>
                <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >
                     Tipo de Documento:
                 </Text>
                {/* aqui debe ir tipo documento */}
+               <Picker
+                selectedValue={this.state.language}
+                style={{height: 50, width: width*0.9}}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({language: itemValue})
+                }>
+                <Picker.Item label="DUI" value="1" />
+                <Picker.Item label="NIT" value="2" />
+                <Picker.Item label="Pasaporte" value="3" />
+                <Picker.Item label="Otros" value="4" />
+              </Picker>
                <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >
                     Numero de Documento:
                 </Text>
@@ -180,16 +205,24 @@ class Citas extends React.Component {
               <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >
               Dirección:
               </Text>
-              <Input
-                rounded
-                type="default"
-                placeholder="direccion"
-                value={value.direccion}
-                autoCapitalize="none"
-                placeholderTextColor={ theme.COLORS.MUTED }
-                style={{ width: width*0.9}}
-                onChangeText={text => this.handleChange('direccion', text)}
+               <Textarea
+                containerStyle={styles.textareaContainer}
+                style={styles.textarea}
+                onChangeText={this.onChange}
+                defaultValue={value.direccion}
+                maxLength={120}
+                placeholder={'Dirección'}
+                placeholderTextColor={'#c7c7c7'}
+                underlineColorAndroid={'transparent'}
               />
+              <Button
+                  round
+                  color="error"
+                  onPress={() => this.actualizar_datos()}
+                  style={{ marginBottom: 300, width:width*0.9 }}
+                >
+                Actualizar
+              </Button>
             </Block>
         </ScrollView>
       </Block>
@@ -205,6 +238,19 @@ const styles = StyleSheet.create({
   settings: {
     width: BASE_SIZE * 4,
     borderColor: 'transparent',
+  },
+  textareaContainer: {
+    height: 180,
+    padding: 5,
+    marginBottom:10,
+    backgroundColor: '#F5FCFF',
+  },
+  textarea: {
+    textAlignVertical: 'top',  // hack android
+    height: 170,
+    fontSize: 14,
+    width:width*0.9,
+    color: '#333',
   },
 });
 

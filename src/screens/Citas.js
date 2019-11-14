@@ -16,35 +16,6 @@ const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
 const COLOR_WHITE = theme.COLORS.WHITE;
 const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 
-// mock data
-const cards = [
-  {
-    title: '18-12-2019',
-    subtitle: 'Visita 4',
-    icon: 'calendar',
-    iconFamily: 'font-awesome',
-  },
-
-  {
-    title: '16-09-2019',
-    subtitle: 'Visita 3',
-    icon: 'calendar',
-    iconFamily: 'font-awesome',
-  },
-  {
-    title: '02-08-2019',
-    subtitle: 'Visita 2',
-    icon: 'calendar',
-    iconFamily: 'font-awesome',
-  },
-
-  {
-    title: '19-01-2019',
-    subtitle: 'Visita 1',
-    icon: 'calendar',
-    iconFamily: 'font-awesome',
-  },
-];
 
 class Citas extends React.Component {
   
@@ -110,7 +81,7 @@ class Citas extends React.Component {
         <Button
           color="transparent"
           style={styles.settings}
-          onPress={() => this.props.navigation.navigate('New_cita')}
+          onPress={() => this.props.navigation.navigate('Cuenta', {name: 'Jane'})}
         >
           <Icon size={BASE_SIZE*1.5} name="calendar-plus-o" family="font-awesome" color={theme.COLORS.PRIMARY} />
         </Button>
