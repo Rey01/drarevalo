@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,Dimensions,Picker
+  StyleSheet, ScrollView, Platform,Dimensions,Picker,AsyncStorage,View,ActivityIndicator
 } from 'react-native';
 import Textarea from 'react-native-textarea';
 // galio components
@@ -15,23 +15,78 @@ const BASE_SIZE = theme.SIZES.BASE;
 const { height, width } = Dimensions.get('window');
 class Citas extends React.Component {
   state = {
-    nombre: '',
-    apellido: '',
-    sexo: '',
-    fecha_nacimiento: '',
-    esta_civil: '',
-    tipo_documento: '',
-    documento: '',
-    correo: '',
-    telefono_domiciliar: '',
-    telefono_celular: '',
-    telefono_oficina: '',
+    cargando:true,
+    nombre: '',//
+    apellido: '',//
+    sexo: '',//
+    fecha_nacimiento: '',//
+    esta_civil: '',//
+    tipo_documento: '',//
+    documento: '',//
+    correo: '',//
+    telefono_domiciliar: '',//
+    telefono_celular: '',//
+    telefono_oficina: '',//
     direccion: '',
+    usuario: {
+      correoElectronico: "",
+      descripcion: "",
+      estado: "",
+      idAsignacionMembresia: "",
+      idExpediente: "",
+      nombreCompleto: "",
+      telemedicina: "",
+    },
   }
+  
+  retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('usuario');
+      if(value !== null) {
+        usuario = JSON.parse(value);
+        this.setState({usuario});
+        this.retrieveExpediente();
+      }else{
+        return false;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  retrieveExpediente = async () => {
+    
+    var idExpediente=this.state.usuario.idExpediente;
+    return fetch(theme.COMPONENTS.URL_API+"GetDetallesTitular?idExpediente="+idExpediente)
+    .then((response) => response.json())
+    .then((resp) => {
+      this.setState({cargando:false});
+      this.setState({
+        nombre: resp.datos.nombre,
+        apellido: resp.datos.apellido,
+        sexo: resp.datos.sexo,
+        fecha_nacimiento: resp.datos.fechaNacimiento,
+        esta_civil: resp.datos.estadoCivil,
+        tipo_documento: resp.datos.tipodocumento,
+        documento: resp.datos.numeroDocumento,
+        correo: resp.datos.email,
+        telefono_domiciliar: resp.datos.telDomicilio,
+        telefono_celular: resp.datos.telCelular,
+        telefono_oficina: resp.datos.telOficina,
+        direccion: resp.datos.domicilio,
+      });
+      
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+  componentWillMount(){
+    this.retrieveData();
+  };
 
   renderHeader = () => (
     <NavBar
-      title="Cuenta {}"
+      title="Cuenta"
       onLeftPress={() => this.props.navigation.openDrawer()}
       leftIconColor={theme.COLORS.MUTED}
       right={(
@@ -56,6 +111,13 @@ class Citas extends React.Component {
 
   render() {
     value = this.state
+    if(this.state.cargando){
+      return (
+        <View style={styles.cargando}>
+          <ActivityIndicator size={theme.SIZES.BASE*2.5} color={theme.COLORS.ERROR} />
+        </View>
+      );
+    }else{
     return (
       <Block flex={2} center space="evenly">
         {/* header */}
@@ -94,6 +156,15 @@ class Citas extends React.Component {
                     Sexo:
                 </Text>
                {/* aqui debe ir sexo */}
+               <Picker
+                selectedValue={this.state.sexo}
+                style={{height: 50, width: width*0.9}}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({sexo: itemValue})
+                }>
+                <Picker.Item label="Masculino" value="M" />
+                <Picker.Item label="Femenino" value="F" />
+              </Picker>
                <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >
                     Fecha de Nacimiento:
                 </Text>
@@ -112,10 +183,10 @@ class Citas extends React.Component {
                 </Text>
                {/* aqui debe ir estado civil */}
                <Picker
-                selectedValue={this.state.language}
+                selectedValue={this.state.esta_civil}
                 style={{height: 50, width: width*0.9}}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({language: itemValue})
+                  this.setState({esta_civil: itemValue})
                 }>
                 <Picker.Item label="Soltero/a" value="1" />
                 <Picker.Item label="Casado/a" value="2" />
@@ -127,10 +198,10 @@ class Citas extends React.Component {
                 </Text>
                {/* aqui debe ir tipo documento */}
                <Picker
-                selectedValue={this.state.language}
+                selectedValue={this.state.tipo_documento}
                 style={{height: 50, width: width*0.9}}
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({language: itemValue})
+                  this.setState({tipo_documento: itemValue})
                 }>
                 <Picker.Item label="DUI" value="1" />
                 <Picker.Item label="NIT" value="2" />
@@ -227,6 +298,7 @@ class Citas extends React.Component {
         </ScrollView>
       </Block>
     );
+    }
   }
 }
 
@@ -244,6 +316,11 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom:10,
     backgroundColor: '#F5FCFF',
+  },
+  cargando:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   textarea: {
     textAlignVertical: 'top',  // hack android
