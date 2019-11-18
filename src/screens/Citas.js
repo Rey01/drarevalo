@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage
+  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage,Dimensions
 } from 'react-native';
 import { LinearGradient as Gradient } from 'expo';
 
@@ -10,6 +10,7 @@ import {
 } from 'galio-framework';
 import theme from '../theme';
 
+const { width,height } = Dimensions.get('screen');
 const BASE_SIZE = theme.SIZES.BASE;
 const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
 const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
@@ -21,6 +22,7 @@ class Citas extends React.Component {
   
   state = {
     cargando: true,
+    new_cita: false,
     usuario: {
       correoElectronico: "",
       descripcion: "",
@@ -70,7 +72,27 @@ class Citas extends React.Component {
     this.retrieveData();
     
   };
+  regresar = async () => {
+    console.log("Demos");
+    this.setState({new_cita:false});
+  };
+  
+  nueva_cita = async () => {
+    this.setState({new_cita:true});
+  };
 
+  renderHeader2 = () => ( 
+    <NavBar
+      back
+      title="Nueva Cita"
+      onLeftPress={() => this.regresar()}
+      leftIconColor={theme.COLORS.MUTED}
+      size={BASE_SIZE}
+      style={{ width, marginHorizontal: - (theme.SIZES.BASE - 2) }}
+         
+      style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}
+    />
+  )
   renderHeader = () => ( 
     <NavBar
       title="Citas"
@@ -81,7 +103,7 @@ class Citas extends React.Component {
         <Button
           color="transparent"
           style={styles.settings}
-          onPress={() => this.props.navigation.navigate('Cuenta', {name: 'Jane'})}
+          onPress={() => this.nueva_cita()}
         >
           <Icon size={BASE_SIZE*1.5} name="calendar-plus-o" family="font-awesome" color={theme.COLORS.PRIMARY} />
         </Button>
@@ -125,13 +147,23 @@ class Citas extends React.Component {
   renderCards = () => this.state.cardsd.map((card, index) => this.renderCard(card, index))
 
   render() {
-    if(this.state.cargando){
+    if(this.state.new_cita){
+      return (
+        <Block safe flex>
+          {this.renderHeader2()}
+
+          <ScrollView style={{ flex: 1 }}>
+
+          </ScrollView>
+        </Block>
+      );
+    }else if(this.state.cargando){
       return (
         <View style={styles.cargando}>
           <ActivityIndicator size={theme.SIZES.BASE*2.5} color={theme.COLORS.ERROR} />
         </View>
       );
-    }else{
+    }else {
       return (
         <Block safe flex>
           {/* header */}
