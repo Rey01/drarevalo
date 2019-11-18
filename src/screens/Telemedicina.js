@@ -24,7 +24,6 @@ class Citas extends React.Component {
           style={styles.settings}
           onPress={() => this.props.navigation.openDrawer()}
         >
-          <Icon size={BASE_SIZE*1.5} name="plus" family="font-awesome" color={theme.COLORS.ERROR} />
         </Button>
       )}
       style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}

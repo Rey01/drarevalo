@@ -29,13 +29,33 @@ class Citas extends React.Component {
           style={styles.settings}
           onPress={() => this.props.navigation.openDrawer()}
         >
-          <Icon size={BASE_SIZE*1.5} name="plus" family="font-awesome" color={theme.COLORS.ERROR} />
         </Button>
       )}
       style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}
     />
   )
-
+  
+  actualizar_datos = async () => {
+    Alert.alert('Datos guardados correctamente');
+    return false;
+    var idExpediente=this.state.usuario.idExpediente;
+    var dataSend = new FormData();
+    dataSend.append('idAsignacionMembresia', idAsignacionMembresia);
+    dataSend.append('idExpediente', idExpediente);
+    
+    return fetch(theme.COMPONENTS.URL_API+"GetConsultas?idAsignacionMembresia="+idAsignacionMembresia+"&idExpediente="+idExpediente, {
+        method: 'POST',
+        body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      console.log(resp.datos);
+      this.setState({cargando:false});
+      this.setState({cardsd:resp.datos});
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
   
 
   render() {

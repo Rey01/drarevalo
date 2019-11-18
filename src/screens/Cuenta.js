@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,Dimensions,Picker,AsyncStorage,View,ActivityIndicator
+  StyleSheet, ScrollView, Platform,Dimensions,Picker,AsyncStorage,View,ActivityIndicator,Alert
 } from 'react-native';
 import Textarea from 'react-native-textarea';
 // galio components
@@ -105,8 +105,40 @@ class Citas extends React.Component {
     this.setState({ [name]: value });
   }
   
-  actualizar_datos = ()=>{
-    console.log(thiis.state);
+  actualizar_datos = async () => {
+    
+    this.setState({cargando:true});
+    var dataSend = new FormData();
+    dataSend.append('nombre', this.state.nombre);
+    dataSend.append('apellido', this.state.apellido);
+    dataSend.append('sexo', this.state.sexo);
+    dataSend.append('fechaNacimiento', this.state.fecha_nacimiento);
+    dataSend.append('estadoCivil', this.state.esta_civil);
+    dataSend.append('idTipoDocumento', this.state.tipo_documento);
+    dataSend.append('numeroDocumento', this.state.documento);
+    dataSend.append('correoElectronico', this.state.correo);
+    dataSend.append('telefonoCasa', this.state.telefono_domiciliar);
+    dataSend.append('telefono_celular', this.state.telefono_celular);
+    dataSend.append('telOficina', this.state.telefono_oficina);
+    dataSend.append('domicilio', this.state.direccion);
+    dataSend.append('idExpediente', this.state.usuario.idExpediente);
+    
+    return fetch(theme.COMPONENTS.URL_API+"UpdatePerfil", {
+      method: 'POST',
+      body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      this.setState({cargando:false});
+      if(resp.datos){
+        Alert.alert('Datos guardados correctamente');
+      }else{
+        Alert.alert('Datos guardados correctamente');
+      }
+    }).catch((error) => {
+      console.error(error);
+    });
+    console.log(this.state);
   }
 
   render() {

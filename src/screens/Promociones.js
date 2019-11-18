@@ -51,7 +51,6 @@ class Citas extends React.Component {
           style={styles.settings}
           onPress={() => this.props.navigation.openDrawer()}
         >
-          
         </Button>
       )}
       style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}
