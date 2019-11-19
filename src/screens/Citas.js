@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage,Dimensions,Picker
+  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage,Dimensions,Picker,Alert
 } from 'react-native';
 import { LinearGradient as Gradient } from 'expo';
-import DatePicker from 'react-native-datepicker'
+import DatePicker from 'react-native-datepicker';
+import Textarea from 'react-native-textarea';
 
 // galio components
 import {
@@ -25,6 +26,7 @@ class Citas extends React.Component {
     cargando: true,
     new_cita: false,
     date:new Date(),
+    horario:"",
     usuario: {
       correoElectronico: "",
       descripcion: "",
@@ -34,12 +36,8 @@ class Citas extends React.Component {
       nombreCompleto: "",
       telemedicina: "",
     },
-    options :{
-        variable1: "Home",
-        variable2: "Food",
-        variable3: "Car",
-        variable4: "Bank",
-    },
+    observacion: "",
+    options:[],
     cardsd:[],
   }
   retrieveData = async () => {
@@ -81,10 +79,63 @@ class Citas extends React.Component {
     
   };
   regresar = async () => {
-    console.log("Demos");
     this.setState({new_cita:false});
   };
   
+  change_date = async ()  => {
+    this.setState({cargando:true,new_cita:false});
+
+    var fecha=this.state.date;
+    var dataSend = new FormData();
+    dataSend.append('idEspecialidad', 1);
+    dataSend.append('idSucursal', 1);
+    dataSend.append('fecha', fecha);
+    dataSend.append('diaSemana', fecha);
+    return fetch(theme.COMPONENTS.URL_API+"GetHorariosDisponibles", {
+      method: 'POST',
+      body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      this.setState({cargando:false,new_cita:true});
+      this.setState({options:resp.datos});
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+  
+  handleChange = (name, value) => {
+    this.setState({ [name]: value });
+  }
+  
+  crear_cita = async ()  => {
+    this.setState({cargando:true,new_cita:false});
+
+    var fecha=this.state.date;
+    var idExpediente=this.state.usuario.idExpediente;
+    var observacion=this.state.observacion;
+    var horario=this.state.horario;
+    var dataSend = new FormData();
+    dataSend.append('idExpediente',idExpediente);
+    dataSend.append('fechaReservacion', fecha);
+    dataSend.append('horario', horario);
+    dataSend.append('idEspecialidad', 1);
+    dataSend.append('observaciones', observacion);
+    dataSend.append('idSucursal', 1);
+    return fetch(theme.COMPONENTS.URL_API+"GuardarCita", {
+      method: 'POST',
+      body: dataSend,
+    })
+    .then((response) => response.json())
+    .then((resp) => {
+      
+     this.setState({date:new Date(),observacion:"",options:[] });
+      Alert.alert('Datos guardados correctamente');
+      this.retrieveCitas();
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
   nueva_cita = async () => {
     this.setState({new_cita:true});
   };
@@ -155,9 +206,8 @@ class Citas extends React.Component {
   renderCards = () => this.state.cardsd.map((card, index) => this.renderCard(card, index))
 
   render() {
-    console.log(this.state.options);
     if(this.state.new_cita){
-      var options = this.state.options;
+      var data = this.state.options;
       return (
         <Block flex={2} center space="evenly">
           {this.renderHeader2()}
@@ -178,16 +228,40 @@ class Citas extends React.Component {
               }
               // ... You can check the source to find the other keys.
             }}
-            onDateChange={(date) => {this.setState({date: date})}}
+            onDateChange={(date) => {this.setState({date: date});this.change_date();}}
           />          
           <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >Tipo:</Text>
 
-          <Picker
-                style={{height: 50, width: width*0.9}}
+              <Picker
+                style={{height: 50, width: width*0.9}} 
                 onValueChange={(itemValue, itemIndex) =>
-                  this.setState({sexo: itemValue})
+                  this.setState({horario: itemValue})
                 }>
+                  { data.map((item, key)=>(
+                    <Picker.Item label={item.horario} value={item.idHorario} key={item.idHorario} />)
+                  )}
               </Picker>
+              <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >
+              Observación:
+              </Text>
+               <Textarea
+                containerStyle={styles.textareaContainer}
+                style={styles.textarea}
+                onChangeText={text => this.handleChange('observacion', text)}
+                defaultValue={this.state.observacion}
+                maxLength={120}
+                placeholder={'Observación'}
+                placeholderTextColor={'#c7c7c7'}
+                underlineColorAndroid={'transparent'}
+              />
+              <Button
+                  round
+                  color="error"
+                  onPress={() => this.crear_cita()}
+                  style={{ marginBottom: 300, width:width*0.9 }}
+                >
+                Guardar Cita
+              </Button>
           </ScrollView>
         </Block>
       );
@@ -221,6 +295,19 @@ const styles = StyleSheet.create({
     padding: BASE_SIZE,
     backgroundColor: COLOR_WHITE,
     shadowOpacity: 0.40,
+  },
+  textareaContainer: {
+    height: 180,
+    padding: 5,
+    marginBottom:10,
+    backgroundColor: '#F5FCFF',
+  },
+  textarea: {
+    textAlignVertical: 'top',  // hack android
+    height: 170,
+    fontSize: 14,
+    width:width*0.9,
+    color: '#333',
   },
   cargando:{
     flex: 1,
