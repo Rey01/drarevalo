@@ -1,8 +1,9 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage,Dimensions
+  StyleSheet, ScrollView, Platform,ActivityIndicator,View,AsyncStorage,Dimensions,Picker
 } from 'react-native';
 import { LinearGradient as Gradient } from 'expo';
+import DatePicker from 'react-native-datepicker'
 
 // galio components
 import {
@@ -23,6 +24,7 @@ class Citas extends React.Component {
   state = {
     cargando: true,
     new_cita: false,
+    date:new Date(),
     usuario: {
       correoElectronico: "",
       descripcion: "",
@@ -32,7 +34,13 @@ class Citas extends React.Component {
       nombreCompleto: "",
       telemedicina: "",
     },
-    cardsd:[]
+    options :{
+        variable1: "Home",
+        variable2: "Food",
+        variable3: "Car",
+        variable4: "Bank",
+    },
+    cardsd:[],
   }
   retrieveData = async () => {
     try {
@@ -147,13 +155,39 @@ class Citas extends React.Component {
   renderCards = () => this.state.cardsd.map((card, index) => this.renderCard(card, index))
 
   render() {
+    console.log(this.state.options);
     if(this.state.new_cita){
+      var options = this.state.options;
       return (
-        <Block safe flex>
+        <Block flex={2} center space="evenly">
           {this.renderHeader2()}
 
           <ScrollView style={{ flex: 1 }}>
+          <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >Fecha:</Text>
+          <DatePicker
+            style={{width: width*0.9}}
+            date={this.state.date}
+            mode="date"
+            placeholder="Seleccione fecha"
+            format="YYYY-MM-DD"
+            confirmBtnText="Confirmar"
+            cancelBtnText="Cancelar"
+            customStyles={{
+              dateInput: {
+                borderRadius:20,
+              }
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={(date) => {this.setState({date: date})}}
+          />          
+          <Text size={theme.SIZES.FONT * 0.75}  style={{ alignSelf: 'flex-start', lineHeight: theme.SIZES.FONT * 2, padding:0,margin:0, }} >Tipo:</Text>
 
+          <Picker
+                style={{height: 50, width: width*0.9}}
+                onValueChange={(itemValue, itemIndex) =>
+                  this.setState({sexo: itemValue})
+                }>
+              </Picker>
           </ScrollView>
         </Block>
       );
