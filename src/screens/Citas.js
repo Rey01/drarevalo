@@ -6,6 +6,7 @@ import { LinearGradient as Gradient } from 'expo';
 import DatePicker from 'react-native-datepicker';
 import Textarea from 'react-native-textarea';
 
+import Promociones_modal from './Promociones_modal';
 // galio components
 import {
   Button, Block, Icon, Text, NavBar,
@@ -279,6 +280,7 @@ class Citas extends React.Component {
 
           {/* cards */}
           <ScrollView style={{ flex: 1 }}>
+            <Promociones_modal />
             {this.renderCards()}
           </ScrollView>
         </Block>
