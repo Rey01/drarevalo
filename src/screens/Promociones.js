@@ -1,48 +1,53 @@
 import React from 'react';
 import {
-  StyleSheet, ScrollView, Platform,Dimensions
+  StyleSheet, ScrollView, Platform,Dimensions,View,ActivityIndicator
 } from 'react-native';
 
+import { LinearGradient } from 'expo-linear-gradient';
 // galio components
 import {
-  Button, Block, Icon,  NavBar, Card,
+  Button, Block, Icon,  NavBar, Card,Text
 } from 'galio-framework';
 import theme from '../theme';
 
 const BASE_SIZE = theme.SIZES.BASE;
+const GRADIENT_BLUE = ['#6B84CA', '#8F44CE'];
+const GRADIENT_PINK = ['#D442F8', '#B645F5', '#9B40F8'];
 
 const { width } = Dimensions.get('screen');
-const cards = [
-  {
-    id: 1,
-    image: 'https://medicina.uv.cl/images/banco_de_fotos/especialidades-medicas.jpg',
-    title: 'Examenes de Ginecologia 1',
-    caption: '31-10-2019',
-  },
-  {
-    id: 2,
-    image: 'https://www.ecestaticos.com/imagestatic/clipping/3c4/906/3c4906527aa1b34915ca5c55c30d52ee/los-sintomas-que-debes-tener-presentes-para-buscar-atencion-medica.jpg?mtime=1496310047',
-    title: 'Examenes de Ginecologia 2',
-    caption: '31-10-2019',
-  },
-  {
-    id: 3,
-    image: 'https://image.freepik.com/vector-gratis/cuidado-salud-antecedentes-medicos-formas-geometricas-hexagonales_1017-11948.jpg',
-    title: 'Examenes de Ginecologia 3',
-    caption: '31-10-2019',
-  },
-  {
-    id: 4,
-    image: 'https://image.posta.com.mx/sites/default/files/segurodegastosmedicos.jpg',
-    title: 'Examenes de Ginecologia 4',
-    caption: '31-10-2019',
-  },
-];
 
 class Citas extends React.Component {
+  state = {
+    cargando: true,
+    new_cita: false,
+    usuario: {
+      correoElectronico: "",
+      descripcion: "",
+      estado: "",
+      idAsignacionMembresia: "",
+      idExpediente: "",
+      nombreCompleto: "",
+      telemedicina: "",
+    },
+    cardsd:[]
+  }
+  retrieveData = async () => {
+    
+    return fetch(theme.COMPONENTS.URL_API+"FetchPromociones")
+    .then((response) => response.json())
+    .then((resp) => {
+      this.setState({cargando:false});
+      this.setState({cardsd:resp.datos});
+    }).catch((error) => {
+      console.error(error);
+    });
+  };
+  componentWillMount(){
+    this.retrieveData();
+  };
   renderHeader = () => (
     <NavBar
-      title="Citas"
+      title="Promociones"
       onLeftPress={() => this.props.navigation.openDrawer()}
       leftIconColor={theme.COLORS.MUTED}
       right={(
@@ -56,66 +61,94 @@ class Citas extends React.Component {
       style={Platform.OS === 'android' ? { marginTop: theme.SIZES.BASE } : null}
     />
   )
+  renderCard = (props, index) => {
+    const gradientColors = index % 2 ? GRADIENT_BLUE : GRADIENT_PINK;
 
+    return (
+      <Block flex space="between" style={styles.cards} key={props.id_promocion}>
+        <Card
+          flex
+          borderless
+          shadowColor={theme.COLORS.BLACK}
+          style={styles.card}
+          title={props.titulo}
+          titleColor={theme.COLORS.WHITE}
+          caption={props.descripcion}
+          footerStyle={styles.cardFull}
+          imageStyle={{ height: theme.SIZES.BASE * 13.75 }}
+          image={props.imagen}
+        >
+          <LinearGradient colors={['transparent', 'rgba(0,0,0, 0.8)']} style={styles.cardGradient} />
+        </Card>
+      </Block>
+    );
+  }
   
+  renderCards = () => this.state.cardsd.map((card, index) => this.renderCard(card, index))
 
   render() {
+    if(this.state.cargando){
+      return (
+        <View style={styles.cargando}>
+          <ActivityIndicator size={theme.SIZES.BASE*2.5} color={theme.COLORS.ERROR} />
+        </View>
+      );
+    }else{
     return (
       <Block safe flex style={{ backgroundColor: theme.COLORS.WHITE }}>
         {/* header */}
         {this.renderHeader()}
 
         {/* cards */}
-        <ScrollView contentContainerStyle={styles.cards}>
+        <ScrollView >
           <Block flex space="between">
-            {cards && cards.map((card, id) => (
-              <Card
-                key={`card-${card.image}`}
-                flex
-                borderless
-                shadowColor={theme.COLORS.BLACK}
-                titleColor={card.full ? theme.COLORS.WHITE : null}
-                style={styles.card}
-                title={card.title}
-                caption={card.caption}
-                image={card.image}
-                imageStyle={[card.padded ? styles.rounded : null]}
-                imageBlockStyle={[
-                  card.padded ? { padding: theme.SIZES.BASE / 2 } : null,
-                  card.full ? null : styles.noRadius,
-                ]}
-                footerStyle={card.full ? styles.full : null}
-              >
-                {card.full ? <LinearGradient colors={['transparent', 'rgba(0,0,0, 0.8)']} style={styles.gradient} /> : null}
-              </Card>
-            ))}
+            {this.renderCards()}
           </Block>
         </ScrollView>
       </Block>
     );
+              }
   }
 }
 
 const styles = StyleSheet.create({
+  
+  cargando:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settings: {
+    width: BASE_SIZE * 2,
+    borderColor: 'transparent',
+  },
   cards: {
-    width,
+    flex: 1,
     backgroundColor: theme.COLORS.WHITE,
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
   card: {
+    borderWidth: 0,
     backgroundColor: theme.COLORS.WHITE,
     width: width - theme.SIZES.BASE * 2,
     marginVertical: theme.SIZES.BASE * 0.875,
-    elevation: theme.SIZES.BASE / 2,
   },
-  menu: {
-    width: BASE_SIZE * 2,
-    borderColor: 'transparent',
+  cardFull: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    left: 0,
   },
-  settings: {
-    width: BASE_SIZE * 2,
-    borderColor: 'transparent',
+  cardGradient: {
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 90,
+    position: 'absolute',
+    overflow: 'hidden',
+    borderBottomRightRadius: theme.SIZES.BASE * 0.5,
+    borderBottomLeftRadius: theme.SIZES.BASE * 0.5,
   },
 });
 
