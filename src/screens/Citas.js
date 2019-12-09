@@ -280,7 +280,6 @@ class Citas extends React.Component {
 
           {/* cards */}
           <ScrollView style={{ flex: 1 }}>
-            <Promociones_modal />
             {this.renderCards()}
           </ScrollView>
         </Block>

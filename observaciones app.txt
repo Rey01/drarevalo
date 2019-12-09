@@ -1,0 +1,7 @@
+1- En examenes que sea los archivos externos.
+2- Push que le aparescan todos las acciones al usuario cuando el dr haga algo en su cuenta.
+3- El diagnostico que aparesca inves de el nombre del doctor en consultas.
+4- En antecedentes que aparesca el formulario que muestra en la ficha clinica
+5- Que telemedicinas sean un listados de links que sea igual alas promociones que sean un 
+   listado que cuando se le de clic habra en el navegador
+        Que su estructuras sea titulo, descripcion, url e imagen de perfil.
