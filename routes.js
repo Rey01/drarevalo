@@ -15,7 +15,7 @@ import Examenes from './src/screens/Examenes';
 import Promociones from './src/screens/Promociones';
 import Telemedicina from './src/screens/Telemedicina';
 import Citas from './src/screens/Citas';
-import New_cita from './src/screens/New_cita';
+import Notas from './src/screens/Notas';
 import Cuenta from './src/screens/Cuenta';
 
 import theme from './src/theme';
@@ -154,6 +154,13 @@ const screens = {
     screen: Promociones,
     navigationOptions: {
       drawerLabel: 'Promociones',
+      drawerIcon: props => <MenuIcon name="calendar" family="font-awesome" focused={props.focused} />,
+    },
+  },
+  Notas: {
+    screen: Notas,
+    navigationOptions: {
+      drawerLabel: 'Notas',
       drawerIcon: props => <MenuIcon name="calendar" family="font-awesome" focused={props.focused} />,
     },
   },

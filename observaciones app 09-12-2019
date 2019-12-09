@@ -1,0 +1,8 @@
+-- Quitar examenes
+-- Panificacion facmiliar esta duplicada (Quitar la de abajo)
+-- Alergias (Que sea igual a antecendetes quirurgicos)
+-- Que el diagnostio de receta sea igual al de la ficha clinica pero aun asi
+-- Que los medicamentos al seleccionarlos cargue el nombre generico en el campo correspondiente
+-- La receta tiene que quitarcele la imagen se caera en un papel menbretado
+-- En la receta arreglar la etiqueta paciente actualmente esta como "Paciennte" (Aun que la receta se modifica a que caiga en una imprecion ya hecha)
+-- Popcast = Nombre de la nueva opcion
