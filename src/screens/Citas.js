@@ -22,7 +22,6 @@ const COLOR_GREY = theme.COLORS.MUTED; // '#D8DDE1';
 
 
 class Citas extends React.Component {
-  
   state = {
     cargando: true,
     new_cita: false,
@@ -77,7 +76,6 @@ class Citas extends React.Component {
   };
   componentWillMount(){
     this.retrieveData();
-    
   };
   regresar = async () => {
     this.setState({new_cita:false});
